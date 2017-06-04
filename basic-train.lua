@@ -28,10 +28,7 @@ function way_function(way, result)
     service = way:get_value_by_key("service"),
     usage = way:get_value_by_key("usage"),
     name = way:get_value_by_key("name"),
-    ref = way:get_value_by_key("ref"),
     maxspeed = way:get_value_by_key("maxspeed"),
-    oneway = way:get_value_by_key("oneway")
-    highspeed = way:get_value_by_key("highspeed") -- unused, could be used to exclude freight
   }
 
   if (
@@ -54,27 +51,17 @@ function way_function(way, result)
   local speed = ternary(is_secondary, config.secondary_speed, config.speed)
   speed = ternary(data.maxspeed, data.maxspeed, speed)
 
+
   result.forward_speed = speed
   result.backward_speed = speed
 
-  result.forward_mode = mode.train
-  result.backward_mode = mode.train
-
-  if data.oneway == "no" or data.oneway == "0" or data.oneway == "false" then
-    -- both ways are ok, nothing to do
-  elseif data.oneway == "-1" then
-    -- opposite direction
-    result.forward_mode = mode.inaccessible
-  elseif data.oneway == "yes" or data.oneway == "1" or data.oneway == "true" then
-    -- oneway
-    result.backward_mode = mode.inaccessible
-  end
-
-  result.name = ternary(data.name, data.name, data.ref)
+  result.name = data.name
 
   result.forward_restricted = is_secondary
   result.backward_restricted = is_secondary
 
+  result.forward_mode = mode.train
+  result.backward_mode = mode.train
 
 end
 
