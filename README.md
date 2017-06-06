@@ -16,3 +16,6 @@ Right now, it contains, 2 profiles :
 A demo can be found [here](http://osrm-demo.partou.se/) (not uptime guaranteed at all, contains routes in Belgium only at the moment)
 
 ![screenshot of the demo](.screenshot.png)
+
+
+Inspiration for the code taken from [an old russian blog](http://flexnst.ru/2015/11/20/osrm-railway-profile/) and [the car profile](https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/car.lua)
