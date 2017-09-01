@@ -1,5 +1,5 @@
 -- This code was written by Nikita Marchant <nikita.marchant@gmail.com>
--- Code under the AGPL license https://www.gnu.org/licenses/agpl-3.0.html
+-- Code under the 2-Clause BSD License https://opensource.org/licenses/BSD-2-Clause
 
 api_version = 1
 
