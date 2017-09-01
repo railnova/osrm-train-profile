@@ -9,8 +9,9 @@ properties.left_hand_driving = true
 properties.use_turn_restrictions = true
 
 local config = {
-  speed = 120,
-  secondary_speed = 10,
+  default_speed = 100,
+  default_secondary_speed = 10,
+  max_speed = 120
   max_angle = 30,
   turn_time = 20,
 
@@ -51,8 +52,9 @@ function way_function(way, result)
     data.usage == "industrial"
   )
 
-  local speed = ternary(is_secondary, config.secondary_speed, config.speed)
-  speed = ternary(data.maxspeed, data.maxspeed, speed)
+  local default_speed = ternary(is_secondary, config.default_secondary_speed, config.default_speed)
+  local speed = ternary(data.maxspeed, data.maxspeed, default_speed)
+  speed = math.min(speed, data.max_speed)
 
   result.forward_speed = speed
   result.backward_speed = speed
