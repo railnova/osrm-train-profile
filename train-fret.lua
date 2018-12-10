@@ -4,17 +4,16 @@
 api_version = 1
 
 properties.max_speed_for_map_matching      = 220/3.6 -- 220kmph -> m/s
-properties.weight_name                     = 'duration'
+properties.weight_name                     = 'routability'
 properties.left_hand_driving = true
 properties.use_turn_restrictions = true
 
 local config = {
   default_speed = 100,
   default_secondary_speed = 10,
-  max_speed = 120
+  max_speed = 120,
   max_angle = 30,
   turn_time = 20,
-
 }
 
 function ternary ( cond , T , F )
@@ -30,9 +29,10 @@ function way_function(way, result)
     usage = way:get_value_by_key("usage"),
     name = way:get_value_by_key("name"),
     ref = way:get_value_by_key("ref"),
-    maxspeed = way:get_value_by_key("maxspeed"),
+    maxspeed = tonumber(way:get_value_by_key("maxspeed")),
     oneway = way:get_value_by_key("oneway"),
     highspeed = way:get_value_by_key("highspeed"),
+    trafic_mode = way:get_value_by_key("railway:traffic_mode"),
   }
 
   if (
@@ -48,19 +48,42 @@ function way_function(way, result)
   local is_secondary = (
     data.service == "siding" or
     data.service == "spur" or
+    data.service == "crossover" or
     data.service == "yard" or
+    data.usage == "branch" or
     data.usage == "industrial"
+  )
+
+  local is_highspeed = (
+    data.highspeed or
+    (data.maxspeed ~= nil and data.maxspeed > 220)
+  )
+
+  local is_freight_line = (
+    data.usage == "freight" or
+    data.trafic_mode == "freight"
   )
 
   local default_speed = ternary(is_secondary, config.default_secondary_speed, config.default_speed)
   local speed = ternary(data.maxspeed, data.maxspeed, default_speed)
-  speed = math.min(speed, data.max_speed)
+  speed = math.min(speed, config.max_speed)
 
   result.forward_speed = speed
   result.backward_speed = speed
 
   result.forward_mode = mode.train
   result.backward_mode = mode.train
+
+  result.forward_rate = 1
+  result.backward_rate = 1
+
+  if is_freight_line then
+    result.forward_rate = 1.2
+    result.backward_rate = 1.2
+  elseif is_highspeed or is_secondary then
+    result.forward_rate = 0.8
+    result.backward_rate = 0.8
+  end
 
   if data.oneway == "no" or data.oneway == "0" or data.oneway == "false" then
     -- both ways are ok, nothing to do
