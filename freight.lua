@@ -71,7 +71,7 @@ function process_way(profile, way, result, relations)
         preferred = way:get_value_by_key("railway:preferred_direction"),
 
         highspeed = way:get_value_by_key("highspeed") == "yes",
-        electified = way:get_value_by_key("electified"),
+        electrified = way:get_value_by_key("electrified"),
         trafic_mode = way:get_value_by_key("railway:traffic_mode"),
     }
 
@@ -151,8 +151,8 @@ function process_way(profile, way, result, relations)
     end
 
     if (
-        data.electified == "no" or
-        data.electified == "rail"
+        data.electrified == "no" or
+        data.electrified == "rail"
     ) then
         result.forward_classes["not_electric"] = true
         result.backward_classes["not_electric"] = true
