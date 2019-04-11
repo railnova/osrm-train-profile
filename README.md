@@ -2,7 +2,7 @@
 
 This repo contains a profile for routing (mostly freight) trains with [OSRM](http://project-osrm.org/). This enables you to find the shortest path by train between 2 points and also do map matching with OSRM.
 
-*Note: travel time estimations are way too optimistic due to the red lights, stations and traffic not taken into account*
+*Note:* travel time estimations are way too optimistic due to the red lights, stations and traffic not taken into account
 
 Right now, it contains, 2 profiles :
 
@@ -11,16 +11,18 @@ A basic/naive profile that works quite well.
 
 ## `freight.lua`
 A profile optimized for freight trains:
-    * Default speed is 130 km/h
-    * Highspeed lines are de-prioritized
-    * Has flags to completely exclude highspeed lines and/or non electrified segments
-    * Rejects all gauges that are not 1435mm
+
+* Default speed is 130 km/h
+* Highspeed lines are de-prioritized
+* Has flags to completely exclude highspeed lines and/or non electrified segments
+* Rejects all gauges that are not 1435mm
 
 Possible improvements that we might one day include :
-    * Preferred left-hand driving even where OSM does not specify it (if you know how to implement it, please be in touch !)
-    * Better turn restrictions/penalties
-    * Speed limitation in curves
-    * Time penalty for traffic lights or when passing trough stations
+
+* Preferred left-hand driving even where OSM does not specify it (if you know how to implement it, please be in touch !)
+* Better turn restrictions/penalties
+* Speed limitation in curves
+* Time penalty for traffic lights or when passing trough stations
 
 ![screenshot of the demo](.screenshot.png)
 
