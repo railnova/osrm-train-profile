@@ -1,18 +1,10 @@
 -- Copyright 2017-2019 Railnova SA <support@railnova.eu>, Nikita Marchant <nikita.marchant@gmail.com>
 -- Code under the 2-clause BSD license
 
--- Freight rail profile
-
 api_version = 4
 
 Set = require('lib/set')
 Sequence = require('lib/sequence')
-Handlers = require("lib/way_handlers")
-Relations = require("lib/relations")
-find_access_tag = require("lib/access").find_access_tag
-limit = require("lib/maxspeed").limit
-Utils = require("lib/utils")
-Measure = require("lib/measure")
 
 function setup()
   return {
@@ -20,13 +12,13 @@ function setup()
       max_speed_for_map_matching     = 220/3.6, -- speed conversion to m/s
       weight_name                    = 'routability',
       left_hand_driving              = true,
-      u_turn_penalty                 = 60 * 2, -- 2 minutes to change cab
+      u_turn_penalty                 = 60 * 2, -- 2 minutes to change cabin
       turn_duration                  = 20,
       continue_straight_at_waypoint  = false,
       max_angle                      = 30,
 
       secondary_speed                = 30,
-      speed                          = 160,
+      speed                          = 130,
     },
 
     default_mode              = mode.train,
@@ -50,6 +42,8 @@ end
 
 function process_node(profile, node, result, relations)
     local railway = node:get_value_by_key("railway")
+
+    -- refuse railway nodes that we cannot go through
     result.barrier = (
         railway == "buffer_stop" or
         railway == "derail"
@@ -91,7 +85,7 @@ function process_way(profile, way, result, relations)
         data.usage == "tourism"
     ) then
         return
-    -- Remove gauges that are not 1435 or underfined
+    -- Keep only gauges that are 1435 or underfined
     elseif (
         data.gauge ~= nil and
         data.gauge ~= "1435" and
@@ -107,8 +101,9 @@ function process_way(profile, way, result, relations)
         data.usage == "industrial"
     )
 
-
+    -- by default, use 30km/h for secondary rails, else 130
     local default_speed = ternary(is_secondary, profile.properties.secondary_speed, profile.properties.speed)
+    -- but is OSM specifies a maxspeed, use the one from OSM
     local speed = ternary(data.maxspeed, data.maxspeed, default_speed)
 
     result.forward_speed = speed
@@ -136,8 +131,12 @@ function process_way(profile, way, result, relations)
         result.forward_rate = result.forward_rate - 0.3
     end
 
+    -- Take the name of the rail, else the reference
+    -- in most cases, both are not specified so this is not very good
+    -- TODO: it might be usefull to look at the relation name
     result.name = ternary(data.name, data.name, data.ref)
 
+    -- Slightly decrease the preference on highspeed rails to avoid them if possible
     if data.highspeed then
         result.forward_classes["highspeed"] = true
         result.backward_classes["highspeed"] = true
@@ -158,7 +157,8 @@ function process_way(profile, way, result, relations)
         result.backward_classes["not_electric"] = true
     end
 
-    -- freight, passenger or mixed
+    -- possible values for trafic_mode : freight, passenger or mixed
+    -- Slightly increase the preference on freight and slightly decrease it for passenger
     if data.trafic_mode == "freight" then
         result.forward_rate = result.forward_rate + 0.1
         result.forward_rate = result.backward_rate + 0.1
@@ -175,12 +175,17 @@ function process_way(profile, way, result, relations)
 end
 
 function process_turn(profile, turn)
+    -- Refuse truns that have a big angle
     if math.abs(turn.angle) >  profile.properties.max_angle then
         return
     end
+    -- If we have a turn with more than 2 roads (more than one way in, one way out)
+    -- then we add a turn penalty
+    -- TODO: we should not add the penalty if we go straight
     if turn.number_of_roads > 2 then
         turn.duration =  profile.properties.turn_duration
     end
+    -- If we go backwards, add the penalty to change cabs
     if turn.is_u_turn then
       turn.duration = turn.duration + profile.properties.u_turn_penalty
     end
