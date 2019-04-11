@@ -1,3 +1,6 @@
+-- Copyright 2017-2019 Railnova SA <support@railnova.eu>, Nikita Marchant <nikita.marchant@gmail.com>
+-- Code under the 2-clause BSD license
+
 -- Freight rail profile
 
 api_version = 4

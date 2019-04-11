@@ -22,7 +22,7 @@ Inspiration for the code taken from [an old russian blog](http://flexnst.ru/2015
 
 # License
 
-This repo is under the 2-Clause BSD License.
+This code is under the 2-Clause BSD License.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
