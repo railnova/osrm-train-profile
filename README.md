@@ -1,24 +1,31 @@
-# Make OSRM profiles for trains great again
+# OSRM Lua profile for trains
 
-This repo contains some profiles for routing trains with [OSRM](http://project-osrm.org/).
+This repo contains a profile for routing (mostly freight) trains with [OSRM](http://project-osrm.org/). This enables you to find the shortest path by train between 2 points and also do map matching with OSRM.
+
+*Note: travel time estimations are way too optimistic due to the red lights, stations and traffic not taken into account*
 
 Right now, it contains, 2 profiles :
 
-* `basic-train.lua` : a basic/naive profile that works quite well.
-* `train.lua` : a yet to be more powerfull profile. It might one day include :
-    * Configuration (freight/passenger, highspeed or not, electric/diesel, gauge, ...)
-    * Preferred left-hand driving even where osm does not specify it (if you know how to implement it, please be in touch !)
-    * Better trun restrictions/penalties
-    * Speed limitation in curves ?
-    * Weight base routing instead of distance/time
-    * Time penalty for trafic lights or when passing trough stations
+## `basic.lua`
+A basic/naive profile that works quite well.
 
-A demo can be found [here](http://osrm-demo.partou.se/) (not uptime guaranteed at all, contains routes in Belgium only at the moment)
+## `freight.lua`
+A profile optimized for freight trains:
+    * Default speed is 130 km/h
+    * Highspeed lines are de-prioritized
+    * Has flags to completely exclude highspeed lines and/or non electrified segments
+    * Rejects all gauges that are not 1435mm
+
+Possible improvements that we might one day include :
+    * Preferred left-hand driving even where OSM does not specify it (if you know how to implement it, please be in touch !)
+    * Better turn restrictions/penalties
+    * Speed limitation in curves
+    * Time penalty for traffic lights or when passing trough stations
 
 ![screenshot of the demo](.screenshot.png)
 
 
-Inspiration for the code taken from [an old russian blog](http://flexnst.ru/2015/11/20/osrm-railway-profile/) and [the car profile](https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/car.lua)
+Inspiration for the code taken from [an old russian blog](https://web.archive.org/web/20170608052036/http://flexnst.ru/2015/11/20/osrm-railway-profile/) and [the car profile](https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/car.lua)
 
 # License
 

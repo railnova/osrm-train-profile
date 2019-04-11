@@ -1,0 +1,118 @@
+-- Copyright 2017-2019 Railnova SA <support@railnova.eu>, Nikita Marchant <nikita.marchant@gmail.com>
+-- Code under the 2-clause BSD license
+
+api_version = 4
+
+function setup()
+  return {
+    properties = {
+      max_speed_for_map_matching     = 220/3.6, -- speed conversion to m/s
+      weight_name                    = 'routability',
+      left_hand_driving              = true,
+      u_turn_penalty                 = 60 * 2, -- 2 minutes to change cabin
+      turn_duration                  = 20,
+      continue_straight_at_waypoint  = false,
+      max_angle                      = 30,
+
+      secondary_speed                = 30,
+      speed                          = 160,
+    },
+
+    default_mode              = mode.train,
+    default_speed             = 120,
+}
+
+end
+
+
+function ternary ( cond , T , F )
+    if cond then return T else return F end
+end
+
+
+function process_node(profile, node, result, relations)
+    local railway = node:get_value_by_key("railway")
+
+    -- refuse railway nodes that we cannot go through
+    result.barrier = (
+        railway == "buffer_stop" or
+        railway == "derail"
+    )
+    result.traffic_lights = false
+end
+
+function process_way(profile, way, result, relations)
+    local data = {
+        railway = way:get_value_by_key("railway"),
+        service = way:get_value_by_key("service"),
+        usage = way:get_value_by_key("usage"),
+        maxspeed = way:get_value_by_key("maxspeed"),
+        gauge = way:get_value_by_key("gauge"),
+    }
+
+    -- Remove everything that is not railway
+    if not data.railway then
+        return
+    -- Remove everything that is not a rail, a turntable, a traverser
+    elseif (
+        data.railway ~= 'rail' and
+        data.railway ~= 'turntable' and
+        data.railway ~= 'traverser'
+    ) then
+        return
+    -- Remove military and tourism rails
+    elseif (
+        data.usage == "military" or
+        data.usage == "tourism"
+    ) then
+        return
+    -- Keep only gauges that are 1435 or underfined
+    elseif (
+        data.gauge ~= nil and
+        data.gauge ~= "1435" and
+        data.gauge ~= 1435
+    ) then
+        return
+    end
+
+    local is_secondary = (
+        data.service == "siding" or
+        data.service == "spur" or
+        data.service == "yard" or
+        data.usage == "industrial"
+    )
+
+    -- by default, use 30km/h for secondary rails, else 160
+    local default_speed = ternary(is_secondary, profile.properties.secondary_speed, profile.properties.speed)
+    -- but is OSM specifies a maxspeed, use the one from OSM
+    local speed = ternary(data.maxspeed, data.maxspeed, default_speed)
+
+    result.forward_speed = speed
+    result.backward_speed = speed
+    --
+    result.forward_mode = mode.train
+    result.backward_mode = mode.train
+    --
+    result.forward_rate = 1
+    result.backward_rate = 1
+
+end
+
+function process_turn(profile, turn)
+    -- Refuse truns that have a big angle
+    if math.abs(turn.angle) >  profile.properties.max_angle then
+        return
+    end
+
+    -- If we go backwards, add the penalty to change cabs
+    if turn.is_u_turn then
+      turn.duration = turn.duration + profile.properties.u_turn_penalty
+    end
+end
+
+return {
+    setup = setup,
+    process_way = process_way,
+    process_node = process_node,
+    process_turn = process_turn
+}
