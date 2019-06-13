@@ -70,8 +70,16 @@ function process_way(profile, way, result, relations)
     elseif (
         data.gauge ~= nil and
         data.gauge ~= "1435" and
-        data.gauge ~= 1435
-    ) then
+        data.gauge ~= 1435 and
+	data.gauge ~= 1520 and
+	data.gauge ~= "1520" and
+	data.gauge ~= 1524 and
+	data.gauge ~= "1524" and
+	data.gauge ~= 1668 and
+	data.gauge ~= "1668" and
+	data.gauge ~= 1600 and
+	data.gauge ~= "1600" 
+   ) then
         return
     end
 
