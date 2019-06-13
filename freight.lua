@@ -89,7 +89,15 @@ function process_way(profile, way, result, relations)
     elseif (
         data.gauge ~= nil and
         data.gauge ~= "1435" and
-        data.gauge ~= 1435
+        data.gauge ~= 1435 and
+	data.gauge ~= 1520 and
+	data.gauge ~= "1520" and
+	data.gauge ~= 1524 and
+	data.gauge ~= "1524" and
+	data.gauge ~= 1668 and
+	data.gauge ~= "1668" and
+	data.gauge ~= 1600 and
+	data.gauge ~= "1600"
     ) then
         return
     end
@@ -105,6 +113,19 @@ function process_way(profile, way, result, relations)
     local default_speed = ternary(is_secondary, profile.properties.secondary_speed, profile.properties.speed)
     -- but is OSM specifies a maxspeed, use the one from OSM
     local speed = ternary(data.maxspeed, data.maxspeed, default_speed)
+
+   -- fix speed for mph issue
+    speed = tostring(speed)
+    if speed:find(" mph") or speed:find("mph") then
+      speed = speed:gsub(" mph", "")
+      speed = speed:gsub("mph", "")
+        speed = tonumber (speed)
+        if speed == nil then speed = 20 end
+	speed = speed * 1.609344
+    else
+     speed = tonumber (speed)
+    end
+    -- fix speed for mph issue end
 
     result.forward_speed = speed
     result.backward_speed = speed
