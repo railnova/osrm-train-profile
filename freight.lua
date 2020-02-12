@@ -28,7 +28,7 @@ function setup()
     -- classes to support for exclude flags
     excludable = Sequence {
         Set {'highspeed'},
-        Set {'not_electric'},
+        Set {'notelectric'},
     },
 }
 
@@ -85,19 +85,16 @@ function process_way(profile, way, result, relations)
         data.usage == "tourism"
     ) then
         return
-    -- Keep only gauges that are 1435 or underfined
+    -- Keep only most common gauges (and undefined)
+    -- uses .find() as some gauges are specified like "1668;1435"
     elseif (
         data.gauge ~= nil and
-        data.gauge ~= "1435" and
-        data.gauge ~= 1435 and
-	data.gauge ~= 1520 and
-	data.gauge ~= "1520" and
-	data.gauge ~= 1524 and
-	data.gauge ~= "1524" and
-	data.gauge ~= 1668 and
-	data.gauge ~= "1668" and
-	data.gauge ~= 1600 and
-	data.gauge ~= "1600"
+        data.gauge ~= 1000 and not string.find(data.gauge, "1000") and
+        data.gauge ~= 1435 and not string.find(data.gauge, "1435") and
+        data.gauge ~= 1520 and not string.find(data.gauge, "1520") and
+        data.gauge ~= 1524 and not string.find(data.gauge, "1524") and
+        data.gauge ~= 1600 and not string.find(data.gauge, "1600") and
+        data.gauge ~= 1668 and not string.find(data.gauge, "1668")
     ) then
         return
     end
@@ -174,8 +171,8 @@ function process_way(profile, way, result, relations)
         data.electrified == "no" or
         data.electrified == "rail"
     ) then
-        result.forward_classes["not_electric"] = true
-        result.backward_classes["not_electric"] = true
+        result.forward_classes["notelectric"] = true
+        result.backward_classes["notelectric"] = true
     end
 
     -- possible values for trafic_mode : freight, passenger or mixed
