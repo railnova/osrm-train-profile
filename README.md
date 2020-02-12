@@ -32,7 +32,7 @@ Inspiration for the code taken from [an old russian blog](https://web.archive.or
 # How to run this?
 
 First, you will need to install the Docker daemon and osmium (`osmium-tool` on Ubuntu) on your machine.
-Then, run `make` to download the OSM data, filter and combine it and finally compute the routing graph.
+Then, run `make all` to download the OSM data, filter and combine it and finally compute the routing graph.
 
 Last, run `make serve` to serve the OSRM server locally on port `5000`
 

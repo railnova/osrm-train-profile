@@ -7,5 +7,5 @@ phases:
 
   build:
     commands:
-      - make
+      - make all
       - ls output
