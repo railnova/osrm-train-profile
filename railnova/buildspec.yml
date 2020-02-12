@@ -1,0 +1,11 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - apt install osmium-tool wget build-essential
+
+  build:
+    commands:
+      - make
+      - ls output
