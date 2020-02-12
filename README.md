@@ -29,6 +29,13 @@ Possible improvements that we might one day include :
 
 Inspiration for the code taken from [an old russian blog](https://web.archive.org/web/20170608052036/http://flexnst.ru/2015/11/20/osrm-railway-profile/) and [the car profile](https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/car.lua)
 
+# How to run this?
+
+First, you will need to install the Docker daemon and osmium (`osmium-tool` on Ubuntu) on your machine.
+Then, run `make` to download the OSM data, filter and combine it and finally compute the routing graph.
+
+Last, run `make serve` to serve the OSRM server locally on port `5000`
+
 # License
 
 This code is under the 2-Clause BSD License.
