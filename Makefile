@@ -8,7 +8,7 @@ COUNTRIES_PBF := $(addsuffix -latest.osm.pbf,$(addprefix world/,$(WANTED_COUNTRI
 
 # Download the raw source file of a country
 world/%.osm.pbf:
-	wget -N -nv -P world/ https://download.geofabrik.de/europe/$*-latest.osm.pbf
+	wget -N -nv -P world/ https://download.geofabrik.de/europe/$*.osm.pbf
 
 # Filter a raw country (in world/*) to rail-only data (in filtered/*)
 filtered/%.osm.pbf: world/%.osm.pbf filter.params
