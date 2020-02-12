@@ -28,7 +28,7 @@ function setup()
     -- classes to support for exclude flags
     excludable = Sequence {
         Set {'highspeed'},
-        Set {'not_electric'},
+        Set {'notelectric'},
     },
 }
 
@@ -174,8 +174,8 @@ function process_way(profile, way, result, relations)
         data.electrified == "no" or
         data.electrified == "rail"
     ) then
-        result.forward_classes["not_electric"] = true
-        result.backward_classes["not_electric"] = true
+        result.forward_classes["notelectric"] = true
+        result.backward_classes["notelectric"] = true
     end
 
     -- possible values for trafic_mode : freight, passenger or mixed
