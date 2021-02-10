@@ -57,7 +57,8 @@ function process_way(profile, way, result, relations)
     elseif (
         data.railway ~= 'rail' and
         data.railway ~= 'turntable' and
-        data.railway ~= 'traverser'
+        data.railway ~= 'traverser' and
+        data.railway  ~= 'ferry'
     ) then
         return
     -- Remove military and tourism rails
