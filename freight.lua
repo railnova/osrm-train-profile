@@ -1,55 +1,55 @@
--- Copyright 2017-2019 Railnova SA <support@railnova.eu>, Nikita Marchant <nikita.marchant@gmail.com>
--- Code under the 2-clause BSD license
-
-api_version = 4
-
-Set = require('lib/set')
-Sequence = require('lib/sequence')
-Measure = require("lib/measure")
-Handlers = require("lib/way_handlers")
-
-function setup()
-  return {
-    properties = {
-      max_speed_for_map_matching     = 220/3.6, -- speed conversion to m/s
-      weight_name                    = 'duration',
-      left_hand_driving              = true,
-      continue_straight_at_waypoint  = false,
-      max_angle                      = 30,
-
-      secondary_speed                = 30,
-      speed                          = 130,
-    },
-
-    default_mode              = mode.train,
-    default_speed             = 120,
-
-    -- classes to support for exclude flags
-    excludable = Sequence {
-        Set {'highspeed'},
-        Set {'notelectric'},
-    },
-}
-
-end
-
-
-function ternary ( cond , T , F )
-    if cond then return T else return F end
-end
-
-
-function process_node(profile, node, result, relations)
-    local railway = node:get_value_by_key("railway")
-
-    -- refuse railway nodes that we cannot go through
-    result.barrier = (
-        railway == "buffer_stop" or
-        railway == "derail"
-    )
-    result.traffic_lights = false
-end
-
+  -- Copyright 2017-2019 Railnova SA <support@railnova.eu>, Nikita Marchant <nikita.marchant@gmail.com>
+  -- Code under the 2-clause BSD license
+  
+  api_version = 4
+  
+  Set = require('lib/set')
+  Sequence = require('lib/sequence')
+  Measure = require("lib/measure")
+  Handlers = require("lib/way_handlers")
+  
+  function setup()
+    return {
+      properties = {
+        max_speed_for_map_matching     = 220/3.6, -- speed conversion to m/s
+        weight_name                    = 'duration',
+        left_hand_driving              = true,
+        continue_straight_at_waypoint  = false,
+        max_angle                      = 30,
+  
+        secondary_speed                = 30,
+        speed                          = 130,
+      },
+  
+      default_mode              = mode.train,
+      default_speed             = 120,
+  
+      -- classes to support for exclude flags
+      excludable = Sequence {
+          Set {'highspeed'},
+          Set {'notelectric'},
+      },
+  }
+  
+  end
+  
+  
+  function ternary ( cond , T , F )
+      if cond then return T else return F end
+  end
+  
+  
+  function process_node(profile, node, result, relations)
+      local railway = node:get_value_by_key("railway")
+  
+      -- refuse railway nodes that we cannot go through
+      result.barrier = (
+          railway == "buffer_stop" or
+          railway == "derail"
+      )
+      result.traffic_lights = false
+  end
+  
 function process_way(profile, way, result, relations)
   local data = {
     railway = way:get_value_by_key("railway"),
@@ -207,7 +207,7 @@ function process_turn(profile, turn)
         turn.duration = turn.duration + 50
     end
 end
-
+  
 return {
   setup = setup,
   process_way = process_way,
