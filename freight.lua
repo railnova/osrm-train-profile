@@ -195,7 +195,7 @@ end
 function process_turn(profile, turn)
     local angle = math.abs(turn.angle)
     if angle > 60 then
-        if turn.is_u_turn or angle > 90 then -- any u-turns are switch reversals, add 5 mins penalty
+        if turn.is_u_turn or angle > 100 then -- any u-turns are switch reversals, add 5 mins penalty
             turn.duration = turn.duration + 3000
         else
             turn.duration = turn.duration + 100
