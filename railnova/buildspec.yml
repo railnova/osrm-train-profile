@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - echo Installing dependencies
-      - apt install -y osmium-tool wget build-essential
+      - yum install -y osmium-tool wget build-essential
 
   pre_build:
     commands:
