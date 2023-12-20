@@ -10,10 +10,8 @@ function setup()
   return {
     properties = {
       max_speed_for_map_matching     = 220/3.6, -- speed conversion to m/s
-      weight_name                    = 'routability',
+      weight_name                    = 'duration',
       left_hand_driving              = true,
-      u_turn_penalty                 = 60 * 2, -- 2 minutes to change cabin
-      turn_duration                  = 20,
       continue_straight_at_waypoint  = false,
       max_angle                      = 30,
 
@@ -160,6 +158,8 @@ function process_way(profile, way, result, relations)
         result.backward_classes["highspeed"] = true
         result.forward_rate = result.forward_rate - 0.2
         result.backward_rate = result.backward_rate - 0.2
+        result.forward_speed = 5
+        result.backward_speed = 5
     end
 
     if data.is_secondary then
@@ -193,19 +193,15 @@ function process_way(profile, way, result, relations)
 end
 
 function process_turn(profile, turn)
-    -- Refuse truns that have a big angle
-    if math.abs(turn.angle) >  profile.properties.max_angle then
-        return
-    end
-    -- If we have a turn with more than 2 roads (more than one way in, one way out)
-    -- then we add a turn penalty
-    -- TODO: we should not add the penalty if we go straight
-    if turn.number_of_roads > 2 then
-        turn.duration =  profile.properties.turn_duration
-    end
-    -- If we go backwards, add the penalty to change cabs
-    if turn.is_u_turn then
-      turn.duration = turn.duration + profile.properties.u_turn_penalty
+    local angle = math.abs(turn.angle)
+    if angle > 60 then
+        if turn.is_u_turn or angle > 80 then -- any u-turns are switch reversals, add 5 mins penalty
+            turn.duration = turn.duration + 3000
+        else
+            turn.duration = turn.duration + 100
+        end
+    else
+        turn.duration = turn.duration + 50
     end
 end
 
