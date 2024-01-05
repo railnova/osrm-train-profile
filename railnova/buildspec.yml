@@ -4,8 +4,9 @@ phases:
   install:
     commands:
       - echo Installing dependencies
-      - apt install -y wget
-      - apt install -y osmium-tool wget build-essential
+      - aws --version
+      - apt-get update
+      - apt-get install -y osmium-tool wget build-essential
 
   pre_build:
     commands:
