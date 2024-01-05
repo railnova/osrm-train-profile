@@ -12,7 +12,7 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION --no-include-email)
+      - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION)
       - REPOSITORY_URI=065077770691.dkr.ecr.eu-central-1.amazonaws.com/osrm
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
 
